@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Apology Page</title>
+    <style>
+        /* General reset and style */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+
+        /* Animated hearts background */
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Individual heart styling and animation */
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 105, 135, 0.8);
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 105, 135, 0.8);
+        }
+
+        /* Different sizes and animations for variety */
+        .heart:nth-child(odd) { animation-duration: 10s; }
+        .heart:nth-child(even) { animation-duration: 12s; }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); }
+            50% { transform: translateY(50vh) translateX(20px); }
+            100% { transform: translateY(-100vh) translateX(-20px); }
+        }
+
+        /* Container for the apology message */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            animation: fadeIn 2s;
+            color: #333;
+            z-index: 1;
+        }
+
+        /* Fade-in effect for the container */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Header for the apology message */
+        h1 {
+            color: #ff6b6b;
+            font-size: 2em;
+        }
+
+        /* Button to start the game */
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #ff6b6b;
+            color: white;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        /* Button hover effect */
+        button:hover {
+            background: #ff4a4a;
+        }
+
+        /* Memory game board styling */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            grid-template-rows: repeat(4, 80px);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Memory game cards styling */
+        .card {
+            width: 80px;
+            height: 80px;
+            background-color: #ffebeb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: #ff6b6b;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .card.flipped {
+            background-color: #fff;
+            color: #ff6b6b;
+            transform: rotateY(180deg);
+        }
+
+        /* Winner message */
+        .winner-message {
+            font-size: 1.2em;
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background Hearts -->
+<div class="hearts">
+    <!-- Generating multiple hearts with inline style for randomness -->
+    <div class="heart" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="heart" style="left: 20%; animation-delay: 2s;"></div>
+    <div class="heart" style="left: 30%; animation-delay: 4s;"></div>
+    <div class="heart" style="left: 40%; animation-delay: 6s;"></div>
+    <div class="heart" style="left: 50%; animation-delay: 1s;"></div>
+    <div class="heart" style="left: 60%; animation-delay: 3s;"></div>
+    <div class="heart" style="left: 70%; animation-delay: 5s;"></div>
+    <div class="heart" style="left: 80%; animation-delay: 7s;"></div>
+    <div class="heart" style="left: 90%; animation-delay: 9s;"></div>
+</div>
+
+<div class="container">
+    <h1>Please Accept My Apology</h1>
+    <p>I'm sorry Vidhi! To make it up to you, here’s a fun memory game just for you.</p>
+    <button onclick="startGame()">Play Now</button>
+
+    <div id="gameBoard" class="game-board" style="display: none;"></div>
+    <p id="gameMessage" class="winner-message"></p>
+</div>
+
+<script>
+    const icons = ["❤️", "🌹", "💖", "🌸", "🌈", "💫", "⭐", "💕"];
+    let board = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+
+    // Function to start the game
+    function startGame() {
+        matchedPairs = 0;
+        document.getElementById("gameMessage").textContent = "";
+        document.getElementById("gameBoard").style.display = "grid";
+        generateBoard();
+    }
+
+    // Function to generate and shuffle the board
+    function generateBoard() {
+        const gameBoard = document.getElementById("gameBoard");
+        gameBoard.innerHTML = ""; // Clear previous board
+        board = [...icons, ...icons].sort(() => 0.5 - Math.random());
+        board.forEach((icon, index) => {
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.dataset.icon = icon;
+            card.onclick = () => flipCard(card);
+            gameBoard.appendChild(card);
+        });
+    }
+
+    // Function to handle card flip
+    function flipCard(card) {
+        if (flippedCards.length < 2 && !card.classList.contains("flipped")) {
+            card.classList.add("flipped");
+            card.textContent = card.dataset.icon;
+            flippedCards.push(card);
+            
+            if (flippedCards.length === 2) {
+                checkMatch();
+            }
+        }
+    }
+
+    // Function to check if two flipped cards match
+    function checkMatch() {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.icon === card2.dataset.icon) {
+            matchedPairs++;
+            flippedCards = [];
+            if (matchedPairs === icons.length) {
+                document.getElementById("gameMessage").textContent = "You won! Thank you for accepting my apology! 💖";
+            }
+        } else {
+            setTimeout(() => {
+                card1.classList.remove("flipped");
+                card2.classList.remove("flipped");
+                card1.textContent = "";
+                card2.textContent = "";
+                flippedCards = [];
+            }, 1000);
+        }
+    }
+</script>
+
+</body>
+</html>
